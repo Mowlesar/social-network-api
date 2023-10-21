@@ -1,7 +1,7 @@
 const { Thought, User } = require('../models');
 
 module.exports = {
-  async getThought(req, res) {
+  async getThoughts(req, res) {
     try {
       const thought = await Thought.find({});
       res.json(thought);
@@ -100,6 +100,25 @@ async removeThoughtReaction(req, res) {
     res.json(thought);
   } catch (err) {
     // If any errors occur during the process, return a 500 response with the error message
+    res.status(500).json(err);
+  }
+},
+
+async updateThought(req, res) {
+  try {
+    const thought = await Thought.findOneAndUpdate(
+      { _id: req.params.thoughtId },
+      { $set: req.body },
+      { runValidators: true, new: true }
+    );
+
+    if (!thought) {
+      return res.status(404).json({ message: 'No Thought with this id!' });
+    }
+
+    res.json(thought);
+  } catch (err) {
+    console.log(err);
     res.status(500).json(err);
   }
 },
